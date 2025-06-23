@@ -1,5 +1,8 @@
 using Microsoft.OpenApi.Models;
 
+using Microsoft.EntityFrameworkCore;
+using TicketingSystem.Infrastructure.Data;
+
 namespace TicketingSystem.API
 {
     public class Program
@@ -7,8 +10,11 @@ namespace TicketingSystem.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            // DbContext
+            builder.Services.AddDbContext<AppDbContect>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            // Add services to the container.
 
-            // ? Add services to the container.
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer(); // ??? ????
             builder.Services.AddSwaggerGen(c =>
