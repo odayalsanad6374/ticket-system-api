@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using TicketingSystem.Core.Entities;
 using TicketingSystem.Infrastructure.Data.Config;
 
 namespace TicketingSystem.Infrastructure.Data
 {
-    public class AppDbContect: DbContext
+    public class AppDbContext : DbContext
     {
         public DbSet<Area> Areas { get; set; }
         public DbSet<User> Users { get; set; }
@@ -15,7 +16,7 @@ namespace TicketingSystem.Infrastructure.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketAttachment> TicketAttachments { get; set; }
-        public AppDbContect(DbContextOptions<AppDbContect> options)
+        public AppDbContext(DbContextOptions<AppDbContext> options)
        : base(options)
         {
         }

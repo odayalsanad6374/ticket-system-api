@@ -10,7 +10,7 @@ using TicketingSystem.Infrastructure.Data;
 
 namespace TicketingSystem.Infrastructure.Migrations
 {
-    [DbContext(typeof(AppDbContect))]
+    [DbContext(typeof(AppDbContext))]
     partial class AppDbContectModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

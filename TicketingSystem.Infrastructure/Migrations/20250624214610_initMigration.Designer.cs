@@ -11,7 +11,7 @@ using TicketingSystem.Infrastructure.Data;
 
 namespace TicketingSystem.Infrastructure.Migrations
 {
-    [DbContext(typeof(AppDbContect))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20250624214610_initMigration")]
     partial class initMigration
     {
