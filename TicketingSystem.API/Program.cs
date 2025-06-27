@@ -2,6 +2,11 @@ using Microsoft.OpenApi.Models;
 
 using Microsoft.EntityFrameworkCore;
 using TicketingSystem.Infrastructure.Data;
+using TicketingSystem.Application.IService;
+using TicketingSystem.Application.Service;
+using TicketingSystem.Core.IRepository;
+using TicketingSystem.Infrastructure.Repository;
+using TicketingSystem.Application.Mapping;
 
 namespace TicketingSystem.API
 {
@@ -10,11 +15,21 @@ namespace TicketingSystem.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            // DbContext
-            builder.Services.AddDbContext<AppDbContect>(options =>
+            //Database context
+            builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            // Add services to the container.
 
+            //2. AutoMapper
+            builder.Services.AddAutoMapper(typeof(TicketMappingProfile).Assembly);
+
+            // Add Repository Injection
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            //Dependency Injection
+            builder.Services.AddScoped<ITicketService, TicketService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+
+            //Controllers & Swagger
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer(); // ??? ????
             builder.Services.AddSwaggerGen(c =>
@@ -40,6 +55,7 @@ namespace TicketingSystem.API
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
             app.Run();
