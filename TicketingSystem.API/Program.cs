@@ -7,6 +7,10 @@ using TicketingSystem.Application.Service;
 using TicketingSystem.Core.IRepository;
 using TicketingSystem.Infrastructure.Repository;
 using TicketingSystem.Application.Mapping;
+using TicketingSystem.Core.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace TicketingSystem.API
 {
@@ -15,19 +19,57 @@ namespace TicketingSystem.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            //CorsPolicy
+            var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.WithOrigins(allowedOrigins ?? Array.Empty<string>())
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+
             //Database context
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            //2. AutoMapper
+            //AutoMapper
             builder.Services.AddAutoMapper(typeof(TicketMappingProfile).Assembly);
+
+            // Load JWT Auth Settings from appsettings.json
+            var authSettings = builder.Configuration.GetSection("JwtSettings").Get<AuthSettings>();
+
+            builder.Services.Configure<AuthSettings>(
+                builder.Configuration.GetSection("JwtSettings"));
+
+            //Configure JWT Authentication
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = authSettings.Issuer,
+                        ValidAudience = authSettings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.Secret))
+                    };
+                });
 
             // Add Repository Injection
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
             //Dependency Injection
             builder.Services.AddScoped<ITicketService, TicketService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             //Controllers & Swagger
             builder.Services.AddControllers();
@@ -53,7 +95,7 @@ namespace TicketingSystem.API
                     c.RoutePrefix = "swagger"; // ???? ??? /swagger
                 });
             }
-
+            app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
