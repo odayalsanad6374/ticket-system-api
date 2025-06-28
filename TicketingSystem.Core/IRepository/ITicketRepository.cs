@@ -2,8 +2,8 @@
 
 namespace TicketingSystem.Core.IRepository
 {
-    public interface ITokenRepository
+    public interface ITicketRepository: IRepository<Ticket>
     {
-        string GenerateToken(User user);
+
     }
 }
