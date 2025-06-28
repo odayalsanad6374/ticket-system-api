@@ -8,6 +8,7 @@ using TicketingSystem.Core.Entities;
 using AutoMapper;
 using TicketingSystem.Application.DTOs.TicketDtos;
 using TicketingSystem.Application.DTOs.UserDtos;
+using TicketingSystem.Application.DTOs.CustomerDtos;
 
 namespace TicketingSystem.Application.Mapping
 {
@@ -21,7 +22,10 @@ namespace TicketingSystem.Application.Mapping
 
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<CreateUserDto, User>().ReverseMap();
-            CreateMap<UpdateUserDto, User>();
+            CreateMap<UpdateUserDto, User>().ReverseMap();
+
+            CreateMap<CustomerDto, Customer>().ReverseMap();
+
         }
     }
 }
