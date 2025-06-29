@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicketingSystem.Application.DTOs.UserDtos;
+﻿using TicketingSystem.Application.DTOs.UserDtos;
 
 namespace TicketingSystem.Application.IService
 {

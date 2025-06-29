@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TicketingSystem.Application.DTOs.TicketDtos;
 using TicketingSystem.Application.IService;
+using TicketingSystem.Application.Models;
 
 namespace TicketingSystem.API.Controllers
 {
@@ -17,9 +18,9 @@ namespace TicketingSystem.API.Controllers
             _ticketService = ticketService;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TicketDto>>> GetAll()
+        public async Task<ActionResult<PaginatedResult<TicketDto>>> GetAll([FromQuery] TicketFilterDto filter)
         {
-            var tickets = await _ticketService.GetAllAsync();
+            var tickets = await _ticketService.GetAllAsync(filter);
             return Ok(tickets);
         }
 

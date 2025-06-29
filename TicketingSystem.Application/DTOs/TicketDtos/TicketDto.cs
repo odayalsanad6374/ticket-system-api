@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicketingSystem.Core.Enums;
+﻿using TicketingSystem.Core.Enums;
 
 namespace TicketingSystem.Application.DTOs.TicketDtos
 {
@@ -17,5 +12,13 @@ namespace TicketingSystem.Application.DTOs.TicketDtos
         public TicketPriority Priority { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
+
+        // Relation Data
+        public string? CustomerName { get; set; }
+        public string? TagName { get; set; }
+        public string? AssignedToUserName { get; set; }
+        public string? AreaName { get; set; }
+        public string? CityName { get; set; }
+        public string? CountryName { get; set; }
     }
 }

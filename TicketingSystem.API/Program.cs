@@ -71,6 +71,7 @@ namespace TicketingSystem.API
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 
             //Controllers & Swagger
             builder.Services.AddControllers();
