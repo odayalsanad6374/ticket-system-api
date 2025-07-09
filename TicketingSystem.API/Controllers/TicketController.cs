@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TicketingSystem.API.ActionFilters;
 using TicketingSystem.Application.DTOs.TicketDtos;
 using TicketingSystem.Application.IService;
 using TicketingSystem.Application.Models;
@@ -18,6 +19,7 @@ namespace TicketingSystem.API.Controllers
             _ticketService = ticketService;
         }
         [HttpGet]
+        [RoleIdAuthorize(1)]
         public async Task<ActionResult<PaginatedResult<TicketDto>>> GetAll([FromQuery] TicketFilterDto filter)
         {
             var tickets = await _ticketService.GetAllAsync(filter);
