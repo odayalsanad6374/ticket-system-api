@@ -38,7 +38,7 @@ namespace TicketingSystem.Application.Service
 
         public async Task<PaginatedResult<TicketDto>> GetAllAsync(TicketFilterDto filter)
         {
-            var query = _ticketRepo.Query(); // نحتاج نضيف هذا في ITicketRepository
+            var query = _ticketRepo.Query();
 
             if (!string.IsNullOrWhiteSpace(filter.TicketNumber))
                 query = query.Where(t => t.TicketNumber!.Contains(filter.TicketNumber));
