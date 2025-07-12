@@ -6,15 +6,12 @@ namespace TicketingSystem.Infrastructure.Repository
 {
     public class TicketRepository: Repository<Ticket>, ITicketRepository
     {
-        private readonly AppDbContext _context;
-
         public TicketRepository(AppDbContext context) : base(context)
         {
-            _context = context;
         }
         public IQueryable<Ticket> Query()
         {
-            return _context.Tickets.AsQueryable();
+            return _context.Set<Ticket>().AsQueryable();
         }
     }
 }

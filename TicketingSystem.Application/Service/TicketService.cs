@@ -8,37 +8,34 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TicketingSystem.Application.Service
 {
-    public class TicketService: ITicketService
+    public class TicketService : ITicketService
     {
-        private readonly IRepository<Ticket> _genericRepo;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ITicketRepository _ticketRepo;
 
-        public TicketService(IRepository<Ticket> genericRepo, IMapper mapper, ITicketRepository ticketRepo)
+        public TicketService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _genericRepo = genericRepo;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _ticketRepo = ticketRepo;
         }
+
         public async Task<TicketDto> GetByIdAsync(int id)
         {
-            //var ticket = await _genericRepo.GetByIdAsync(id);
-            //return _mapper.Map<TicketDto>(ticket);
-            var ticket = await _ticketRepo.Query()
-            .Include(t => t.Customer)
-                .ThenInclude(c => c.Area)
-                    .ThenInclude(a => a.City)
-                        .ThenInclude(ci => ci.Country)
-            .Include(t => t.AssignedUser)
-            .Include(t => t.Tag)
-            .FirstOrDefaultAsync(t => t.Id == id);
+            var ticket = await _unitOfWork.TicketRepository.Query()
+                .Include(t => t.Customer)
+                    .ThenInclude(c => c.Area)
+                        .ThenInclude(a => a.City)
+                            .ThenInclude(ci => ci.Country)
+                .Include(t => t.AssignedUser)
+                .Include(t => t.Tag)
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             return ticket == null ? null : _mapper.Map<TicketDto>(ticket);
         }
 
         public async Task<PaginatedResult<TicketDto>> GetAllAsync(TicketFilterDto filter)
         {
-            var query = _ticketRepo.Query();
+            var query = _unitOfWork.TicketRepository.Query();
 
             if (!string.IsNullOrWhiteSpace(filter.TicketNumber))
                 query = query.Where(t => t.TicketNumber!.Contains(filter.TicketNumber));
@@ -83,28 +80,32 @@ namespace TicketingSystem.Application.Service
             };
         }
 
-
         public async Task AddAsync(CreateTicketDto dto)
         {
             var ticket = _mapper.Map<Ticket>(dto);
-            await _genericRepo.AddAsync(ticket);
+            await _unitOfWork.Repository<Ticket>().AddAsync(ticket);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(UpdateTicketDto dto)
         {
-            var existing = await _genericRepo.GetByIdAsync(dto.Id);
+            var existing = await _unitOfWork.Repository<Ticket>().GetByIdAsync(dto.Id);
             if (existing is null)
                 throw new Exception("Ticket not found");
 
-            _mapper.Map(dto, existing); // تحديث الكيان مباشرة
-            await _genericRepo.UpdateAsync(existing);
+            _mapper.Map(dto, existing);
+            await _unitOfWork.Repository<Ticket>().UpdateAsync(existing);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
-            var ticket = await _genericRepo.GetByIdAsync(id);
+            var ticket = await _unitOfWork.Repository<Ticket>().GetByIdAsync(id);
             if (ticket != null)
-                await _genericRepo.DeleteAsync(ticket);
+            {
+                await _unitOfWork.Repository<Ticket>().DeleteAsync(ticket);
+                await _unitOfWork.SaveChangesAsync();
+            }
         }
     }
 }

@@ -34,37 +34,37 @@ namespace TicketingSystem.Infrastructure.Repository
         public async Task AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            // SaveChanges removed - handled by UnitOfWork
         }
 
         public async Task AddRangeAsync(IEnumerable<T> entities)
         {
             await _dbSet.AddRangeAsync(entities);
-            await _context.SaveChangesAsync();
+            // SaveChanges removed - handled by UnitOfWork
         }
 
         public async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
+            // SaveChanges removed - handled by UnitOfWork
         }
 
         public async Task UpdateRangeAsync(IEnumerable<T> entities)
         {
             _dbSet.UpdateRange(entities);
-            await _context.SaveChangesAsync();
+            // SaveChanges removed - handled by UnitOfWork
         }
 
         public async Task DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
+            // SaveChanges removed - handled by UnitOfWork
         }
 
         public async Task DeleteRangeAsync(IEnumerable<T> entities)
         {
             _dbSet.RemoveRange(entities);
-            await _context.SaveChangesAsync();
+            // SaveChanges removed - handled by UnitOfWork
         }
 
         public async Task DeleteByIdAsync(int id)
@@ -72,9 +72,9 @@ namespace TicketingSystem.Infrastructure.Repository
             var entity = await GetByIdAsync(id);
             if (entity != null)
             {
-                await DeleteAsync(entity);
+                _dbSet.Remove(entity);
+                // SaveChanges removed - handled by UnitOfWork
             }
         }
     }
-
 }
