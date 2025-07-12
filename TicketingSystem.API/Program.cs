@@ -62,16 +62,15 @@ namespace TicketingSystem.API
                     };
                 });
 
+            // Unit of Work Registration
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             // Add Repository Injection
-            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
-
-            //Dependency Injection
+            //Add Services Injection
             builder.Services.AddScoped<ITicketService, TicketService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
-            builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 
             //Controllers & Swagger
             builder.Services.AddControllers();
