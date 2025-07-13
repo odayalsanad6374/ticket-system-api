@@ -11,6 +11,7 @@ using TicketingSystem.Core.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using TicketingSystem.API.Middleware.MiddlewareExtensions;
 
 namespace TicketingSystem.API
 {
@@ -41,12 +42,12 @@ namespace TicketingSystem.API
             builder.Services.AddAutoMapper(typeof(TicketMappingProfile).Assembly);
 
             // Load JWT Auth Settings from appsettings.json
-            var authSettings = builder.Configuration.GetSection("JwtSettings").Get<AuthSettings>();
 
             builder.Services.Configure<AuthSettings>(
                 builder.Configuration.GetSection("JwtSettings"));
 
             //Configure JWT Authentication
+            var authSettings = builder.Configuration.GetSection("JwtSettings").Get<AuthSettings>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -85,6 +86,8 @@ namespace TicketingSystem.API
             });
 
             var app = builder.Build();
+            //Middleware
+            app.UseExceptionMiddleware();
 
             // ? Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
